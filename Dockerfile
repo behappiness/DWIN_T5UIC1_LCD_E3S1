@@ -5,11 +5,12 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
     python3-serial \
     python3-gpiozero \
+    python3-rpi.gpio \
     git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
-RUN pip3 install multitimer requests
+RUN pip3 install multitimer requests RPi.GPIO
 
 # Create and set working directory
 WORKDIR /app
