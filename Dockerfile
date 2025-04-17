@@ -7,17 +7,10 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-serial \
     python3-gpiozero \
-    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Create and activate virtual environment with system site packages
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 # Activate virtual environment and install packages
-RUN . $VIRTUAL_ENV/bin/activate && \
-    pip install --no-cache-dir multitimer requests RPi.GPIO serial
+RUN pip install --no-cache-dir multitimer requests RPi.GPIO serial
 
 # Create and set working directory
 WORKDIR /app
@@ -37,4 +30,4 @@ ENV ENCODER_PINS="26,19" \
     URL="127.0.0.1"
 
 # Start the application using the virtual environment's Python
-CMD [ "/opt/venv/bin/python", "./run.py" ]
+CMD [ "python", "./run.py" ]
