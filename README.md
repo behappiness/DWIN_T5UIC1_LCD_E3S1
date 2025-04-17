@@ -1,14 +1,8 @@
 # DWIN_T5UIC1_LCD_E3S1
 
-## Docker container with python class for the Ender 3 V2 and Ender 3 S1 LCD runing klipper3d with Moonraker 
+## Docker container with python class for the Ender 3 S1 and other LCDs (DWIN, DACAI, TJC) runing [klipper3d](https://www.klipper3d.org) with [Moonraker](https://github.com/arksine/moonraker) 
 
-If you want to run this without Docker, check out the original repo: https://github.com/RobRobM/DWIN_T5UIC1_LCD_E3S1
-
-https://www.klipper3d.org
-
-https://octoprint.org/
-
-https://github.com/arksine/moonraker
+If you want to run this without Docker, check out the original [repo](https://github.com/RobRobM/DWIN_T5UIC1_LCD_E3S1).
 
 ## Setup:
 
@@ -30,7 +24,9 @@ https://github.com/arksine/moonraker
 
 ### Rrequirements 
 
-  Install [prind](https://github.com/mkuf/prind).
+  * Flash updated LCD frimware [here](https://github.com/mriscoc/Ender3V2S1/wiki/How-to-update-the-display).
+
+  * Install [prind](https://github.com/mkuf/prind).
 
 ### Wire the display 
 
@@ -60,7 +56,7 @@ TJC display pinout:
 
 ### Deploy
   
-  Add this service to [docker.overrides.yaml](https://github.com/mkuf/prind/blob/main/docker-compose.override.yaml).
+  Add this service to [docker-compose.overrides.yaml](https://github.com/mkuf/prind/blob/main/docker-compose.override.yaml).
   Change the URL and LCD_COM_PORT.
 
 ```yaml
