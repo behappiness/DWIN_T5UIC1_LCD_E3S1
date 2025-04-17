@@ -1,14 +1,15 @@
-FROM arm32v7/python:3.9-slim
+FROM python:3.9-slim
 
 # Install required system packages
 RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
     python3-serial \
-    python3-gpiozero \
     python3-rpi.gpio \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
-RUN pip3 install --no-cache-dir multitimer requests RPi.GPIO
+RUN pip3 install --no-cache-dir multitimer requests
 
 # Create and set working directory
 WORKDIR /app
