@@ -62,6 +62,7 @@ TJC display pinout:
 ```yaml
 dwin-lcd:
     image: ghcr.io/behappiness/dwin_t5uic1_lcd_e3s1:latest
+    privileged: true
     environment:
       - ENCODER_PINS=26,19
       - BUTTON_PIN=13

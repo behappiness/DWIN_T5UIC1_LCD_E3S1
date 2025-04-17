@@ -4,12 +4,20 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-dev \
+    python3-pip \
     python3-serial \
-    python3-rpi.gpio \
+    python3-gpiozero \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages
-RUN pip3 install --no-cache-dir multitimer requests
+# Create and activate virtual environment
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Activate virtual environment and install packages
+RUN . $VIRTUAL_ENV/bin/activate && \
+    pip install --no-cache-dir multitimer requests RPi.GPIO
 
 # Create and set working directory
 WORKDIR /app
@@ -28,5 +36,5 @@ ENV ENCODER_PINS="26,19" \
     KLIPPY_SOCKET="/opt/printer_data/run/klipper.sock" \
     URL="127.0.0.1"
 
-# Start the application
-CMD [ "python", "./run.py" ]
+# Start the application using the virtual environment's Python
+CMD [ "/opt/venv/bin/python", "./run.py" ]
