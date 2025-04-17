@@ -17,7 +17,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Activate virtual environment and install packages
 RUN . $VIRTUAL_ENV/bin/activate && \
-    pip install --no-cache-dir multitimer requests RPi.GPIO
+    pip install --no-cache-dir multitimer requests RPi.GPIO serial
 
 # Create and set working directory
 WORKDIR /app
