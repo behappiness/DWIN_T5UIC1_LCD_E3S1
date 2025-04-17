@@ -249,11 +249,11 @@ class PrinterData:
 	SHORT_BUILD_VERSION = "1.00"
 	CORP_WEBSITE_E = "https://www.klipper3d.org/"
 
-	def __init__(self, API_Key, URL='127.0.0.1'):
+	def __init__(self, API_Key, URL, klipper_socket):
 		self.op = MoonrakerSocket(URL, 80, API_Key)
 		self.status = None
 		print(self.op.base_address)
-		self.ks = KlippySocket('/tmp/klippy_uds', callback=self.klippy_callback)
+		self.ks = KlippySocket(klipper_socket, callback=self.klippy_callback)
 		subscribe = {
 			"id": 4001,
 			"method": "objects/subscribe",
@@ -520,3 +520,8 @@ class PrinterData:
 
 	def setZOffset(self, offset):
 		self.sendGCode('SET_GCODE_OFFSET Z=%s MOVE=1' % offset)
+
+
+class DWIN_LCD:
+	def __init__(self, com_port, encoder_pins, button_pin, api_key, klippy_socket='/tmp/klippy_uds'):
+		self.ks = KlippySocket(klippy_socket, callback=self.klippy_callback)
