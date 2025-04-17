@@ -62,7 +62,6 @@ TJC display pinout:
 ```yaml
 dwin-lcd:
     image: ghcr.io/behappiness/dwin_t5uic1_lcd_e3s1:latest
-    container_name: dwin-lcd
     environment:
       - ENCODER_PINS=26,19
       - BUTTON_PIN=13
@@ -70,6 +69,9 @@ dwin-lcd:
       - API_KEY=USE_IF_NEEDED
       - KLIPPY_SOCKET=/opt/printer_data/run/klipper.sock
       - URL=127.0.0.1
+    depends_on:
+      klipper:
+        condition: service_started
     devices:
       - /dev/ttyAMA0:/dev/ttyAMA0
     volumes:

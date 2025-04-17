@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM python:3.9-slim
 
 # Install required system packages
@@ -26,10 +27,6 @@ ENV ENCODER_PINS="26,19" \
     API_KEY="USE_IF_NEEDED" \
     KLIPPY_SOCKET="/opt/printer_data/run/klipper.sock" \
     URL="127.0.0.1"
-
-# Create a non-root user
-RUN useradd -m -s /bin/bash appuser
-USER appuser
 
 # Start the application
 CMD ["./run.sh"] 
