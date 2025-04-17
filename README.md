@@ -73,10 +73,10 @@ dwin-lcd:
       klipper:
         condition: service_started
     devices:
-      - /dev/ttyAMA0:/dev/ttyAMA0
+      - /dev:/dev
     volumes:
       - run:/opt/printer_data/run
-    restart: unless-stopped 
+    restart: always
 ```
 
 Your container output should be:

@@ -520,8 +520,3 @@ class PrinterData:
 
 	def setZOffset(self, offset):
 		self.sendGCode('SET_GCODE_OFFSET Z=%s MOVE=1' % offset)
-
-
-class DWIN_LCD:
-	def __init__(self, com_port, encoder_pins, button_pin, api_key, klippy_socket='/tmp/klippy_uds'):
-		self.ks = KlippySocket(klippy_socket, callback=self.klippy_callback)
