@@ -30,4 +30,4 @@ ENV ENCODER_PINS="26,19" \
     URL="127.0.0.1"
 
 # Start the application using the virtual environment's Python
-CMD [ "python", "./run.py" ]
+CMD [ "./run.sh" ]

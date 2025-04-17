@@ -2,7 +2,7 @@
 
 i=0
 start_time=$(date +%s)
-while [ $i -lt 5 ]
+while [ $i -lt 1000 ]
 do
   # Run the Python script and save the start time
   echo "LCD attempt $i"
