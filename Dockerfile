@@ -6,11 +6,11 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-pip \
     python3-serial \
-    python3-gpiozero \
+    python3-rpi-lgpio \
     && rm -rf /var/lib/apt/lists/*
 
-# Activate virtual environment and install packages
-RUN pip install --no-cache-dir multitimer requests RPi.GPIO serial
+# Install Python packages
+RUN pip install --no-cache-dir multitimer requests serial rpi-lgpio
 
 # Create and set working directory
 WORKDIR /app
