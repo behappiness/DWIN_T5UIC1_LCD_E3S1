@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Create and activate virtual environment
+# Create and activate virtual environment with system site packages
 ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
+RUN python3 -m venv $VIRTUAL_ENV --system-site-packages
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Activate virtual environment and install packages
