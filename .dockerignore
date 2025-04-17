@@ -1,6 +1,7 @@
 # Git
 .git
 .gitignore
+.github/
 
 # Python
 __pycache__/
@@ -42,6 +43,7 @@ Thumbs.db
 # Docker
 Dockerfile
 .dockerignore
+docker-compose.yml
 
 # Project specific
 *.log

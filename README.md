@@ -60,7 +60,8 @@ TJC display pinout:
 
 ### Deploy
   
-  Add this service to docker.overrides.yaml
+  Add this service to [docker.overrides.yaml](https://github.com/mkuf/prind/blob/main/docker-compose.override.yaml).
+  Change the URL and LCD_COM_PORT.
 
 ```yaml
 dwin-lcd:
