@@ -73,9 +73,9 @@ dwin-lcd:
     depends_on:
       klipper:
         condition: service_started
+      moonraker:
+        condition: service_started
     volumes:
-      - /sys/class/gpio:/sys/class/gpio
-      - /dev:/dev
       - run:/opt/printer_data/run
     restart: unless-stopped
 ```

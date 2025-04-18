@@ -4,7 +4,6 @@ services:
   dwin-lcd:
     build: .
     container_name: prind-dwin-lcd
-    privileged: true
     environment:
       - ENCODER_PINS=26,19
       - BUTTON_PIN=13
@@ -15,8 +14,8 @@ services:
     depends_on:
       klipper:
         condition: service_started
+      moonraker:
+        condition: service_started
     volumes:
-      - /sys/class/gpio:/sys/class/gpio
-      - /dev:/dev
       - run:/opt/printer_data/run
     restart: unless-stopped 
