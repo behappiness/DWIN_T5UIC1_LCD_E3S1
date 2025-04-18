@@ -18,4 +18,4 @@ services:
     volumes:
       - /dev:/dev
       - run:/opt/printer_data/run
-    restart: always 
+    restart: unless-stopped 
