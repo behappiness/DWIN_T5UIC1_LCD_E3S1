@@ -4,8 +4,8 @@ import atexit
 import requests
 import os
 
-from encoder import Encoder
-from RPi import GPIO
+from gpiozero import Button
+from gpiozero import RotaryEncoder
 
 from printerInterface import PrinterData
 from DWIN_Screen import T5UIC1_LCD
@@ -17,10 +17,6 @@ PrinterOffURL = "http://REPLACEYOURURL:7125/machine/device_power/off?Printer"
 LightStatusURL = "http://REPLACEYOURURL:7125/machine/device_power/status?Lights"
 LightOnURL = "http://REPLACEYOURURL:7125/machine/device_power/on?Lights"
 LightOffURL = "http://REPLACEYOURURL:7125/machine/device_power/off?Lights"
-
-def current_milli_time():
-	return round(time.time() * 1000)
-
 
 def _MAX(lhs, rhs):
 	if lhs > rhs:
@@ -312,17 +308,12 @@ class DWIN_LCD:
 	# Passing parameters: serial port number
 	# DWIN screen uses serial port 1 to send
 	def __init__(self, USARTx, encoder_pins, button_pin, octoPrint_API_Key, klipper_socket, URL):
-		GPIO.setmode(GPIO.BCM)
-		self.encoder = Encoder(encoder_pins[0], encoder_pins[1])
-		self.button_pin = button_pin
-		GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.add_event_detect(self.button_pin, GPIO.BOTH, callback=self.encoder_has_data)
-		self.encoder.callback = self.encoder_has_data
-		self.EncodeLast = 0
-		self.EncodeMS = current_milli_time() + self.ENCODER_WAIT
-		self.EncodeEnter = current_milli_time() + self.ENCODER_WAIT_ENTER
-		self.next_rts_update_ms = 0
-		self.last_cardpercentValue = 101
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_NO
+		self.encoder = RotaryEncoder(encoder_pins[0], encoder_pins[1], bounce_time=0.05, max_steps=1000000)
+		self.button = Button(button_pin, bounce_time=0.2)
+		self.button.when_pressed = self.pressed
+		self.encoder.when_rotated_clockwise = self.rotated_cw
+		self.encoder.when_rotated_counter_clockwise = self.rotated_ccw
 		self.lcd = T5UIC1_LCD(USARTx)
 		self.checkkey = self.MainMenu
 		self.pd = PrinterData(octoPrint_API_Key, URL, klipper_socket)
@@ -344,7 +335,7 @@ class DWIN_LCD:
 		self.lcd.Frame_SetDir(1)
 		self.lcd.UpdateLCD()
 		self.timer.stop()
-		GPIO.remove_event_detect(self.button_pin)
+		self.button.when_pressed = None
 
 	def MBASE(self, L):
 		return 49 + self.MLINE * L
@@ -1836,7 +1827,7 @@ class DWIN_LCD:
 
 		if self.pd.HAS_FAN:
 		 	self.Draw_Menu_Line(self.TUNE_CASE_FAN, self.ICON_FanSpeed)
-		 	self.lcd.Draw_IntValue(
+			self.lcd.Draw_IntValue(
 		 		True, True, 0, self.lcd.font8x16, self.lcd.Color_White, self.lcd.Color_Bg_Black,
 		 		3, 216, self.MBASE(self.TUNE_CASE_FAN),
 		 		self.pd.thermalManager['fan_speed'][0]
@@ -2278,7 +2269,7 @@ class DWIN_LCD:
 			self.Draw_Status_Area(update)
 		self.lcd.UpdateLCD()
 
-	def encoder_has_data(self, val):
+	def encoder_has_data(self):
 		if self.checkkey == self.MainMenu:
 			self.HMI_MainMenu()
 		elif self.checkkey == self.SelectFile:
@@ -2341,25 +2332,23 @@ class DWIN_LCD:
 			self.HMI_StepXYZE()
 
 	def get_encoder_state(self):
-		if self.EncoderRateLimit:
-			if self.EncodeMS > current_milli_time():
-				return self.ENCODER_DIFF_NO
-			self.EncodeMS = current_milli_time() + self.ENCODER_WAIT
+		return self.ENCODER_DIFF_STATE
 
-		if self.encoder.value < self.EncodeLast:
-			self.EncodeLast = self.encoder.value
-			return self.ENCODER_DIFF_CW
-		elif self.encoder.value > self.EncodeLast:
-			self.EncodeLast = self.encoder.value
-			return self.ENCODER_DIFF_CCW
-		elif not GPIO.input(self.button_pin):
-			if self.EncodeEnter > current_milli_time(): # prevent double clicks
-				return self.ENCODER_DIFF_NO
-			self.EncodeEnter = current_milli_time() + self.ENCODER_WAIT_ENTER
-			return self.ENCODER_DIFF_ENTER
-		else:
-			return self.ENCODER_DIFF_NO
+	def pressed(self):
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_ENTER
+		self.encoder_has_data()
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_NO
 
+	def rotated_ccw(self):   
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_CCW
+		self.encoder_has_data()
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_NO
+  
+	def rotated_cw(self):   
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_CW
+		self.encoder_has_data()
+		self.ENCODER_DIFF_STATE = self.ENCODER_DIFF_NO
+    
 	def HMI_AudioFeedback(self, success=True):
 		if (success):
 			self.pd.buzzer.tone(100, 659)

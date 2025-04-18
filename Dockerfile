@@ -1,16 +1,13 @@
 FROM python:3.9-slim
 
 # Install required system packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    python3-pip \
+RUN apt update && apt install -y \
     python3-serial \
-    python3-rpi-lgpio \
+    python3-gpiozero \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python packages
-RUN pip install --no-cache-dir multitimer requests serial rpi-lgpio
+RUN pip install --no-cache-dir multitimer requests serial gpiozero
 
 # Create and set working directory
 WORKDIR /app
@@ -29,5 +26,5 @@ ENV ENCODER_PINS="26,19" \
     KLIPPY_SOCKET="/opt/printer_data/run/klipper.sock" \
     URL="127.0.0.1"
 
-# Start the application using the virtual environment's Python
+# Start the application
 CMD [ "./run.sh" ]
