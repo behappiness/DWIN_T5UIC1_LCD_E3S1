@@ -1,6 +1,6 @@
 multitimer
 requests
-serial
+pyserial
 gpiozero
 pigpio
 lgpio
