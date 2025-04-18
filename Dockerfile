@@ -7,10 +7,10 @@ WORKDIR /app
 COPY . /app/
 
 # Install required system packages
-RUN apt update && apt install -y \
-    python3-pigpio \
-    python3-serial \
-    python3-gpiozero
+# RUN apt-get update && apt-get install -y \
+#     python3-pigpio \
+#     python3-serial \
+#     python3-gpiozero
 
 # Install Python packages
 RUN pip install --upgrade pip
