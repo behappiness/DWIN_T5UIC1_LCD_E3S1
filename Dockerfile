@@ -1,19 +1,20 @@
-FROM python:3.9-slim
-
-# Install required system packages
-RUN apt update && apt install -y \
-    python3-serial \
-    python3-gpiozero \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python packages
-RUN pip install --no-cache-dir multitimer requests serial gpiozero
+FROM python:3.11-slim
 
 # Create and set working directory
 WORKDIR /app
 
 # Copy application files
 COPY . /app/
+
+# Install required system packages
+RUN apt update && apt install -y \
+    python3-pigpio \
+    python3-serial \
+    python3-gpiozero
+
+# Install Python packages
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Make scripts executable
 RUN chmod +x run.py run.sh
@@ -27,4 +28,4 @@ ENV ENCODER_PINS="26,19" \
     URL="127.0.0.1"
 
 # Start the application
-CMD [ "./run.sh" ]
+CMD [ "python", "./run.py" ]
