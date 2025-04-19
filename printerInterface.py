@@ -255,15 +255,15 @@ class PrinterData:
 		print(self.op.base_address)
 		self.ks = KlippySocket(klipper_socket, callback=self.klippy_callback)
 		subscribe = {
-			"id": 4001,
-			"method": "objects/subscribe",
+			"id": 5434,
+   			"jsonrpc": "2.0",
+			"method": "printer.objects.subscribe",
 			"params": {
 				"objects": {
 					"toolhead": [
 						"position"
 					]
-				},
-				"response_template": {}
+				}
 			}
 		}
 		self.klippy_z_offset = '{"id": 4002, "method": "objects/query", "params": {"objects": {"configfile": ["config"]}}}'
@@ -281,9 +281,8 @@ class PrinterData:
 	def klippy_callback(self, line):
 		klippyData = json.loads(line)
 		status = None
-		if 'result' in klippyData:
-			if 'status' in klippyData['result']:
-				status = klippyData['result']['status']
+		if 'status' in klippyData:
+			status = klippyData['status']
 		if 'params' in klippyData:
 			if 'status' in klippyData['params']:
 				status = klippyData['params']['status']
@@ -363,11 +362,11 @@ class PrinterData:
 			return
 		self.update_variable()
 		#alternative approach
-		#full_version = self.getREST('/printer/info')['result']['software_version']
+		#full_version = self.getREST('/printer/info')['software_version']
 		#self.SHORT_BUILD_VERSION = '-'.join(full_version.split('-',2)[:2])
-		self.SHORT_BUILD_VERSION = self.getREST('/machine/update/status?refresh=false')['result']['version_info']['klipper']['version']
+		self.SHORT_BUILD_VERSION = self.getREST('/machine/update/status?refresh=false')['version_info']['klipper']['version']
 
-		data = self.getREST('/printer/objects/query?toolhead')['result']['status']
+		data = self.getREST('/printer/objects/query?toolhead')['status']
 		toolhead = data['toolhead']
 		volume = toolhead['axis_maximum'] #[x,y,z,w]
 		self.MACHINE_SIZE = "{}x{}x{}".format(
@@ -388,7 +387,7 @@ class PrinterData:
 
 	def update_variable(self):
 		query = '/printer/objects/query?extruder&heater_bed&gcode_move&fan'
-		data = self.getREST(query)['result']['status']
+		data = self.getREST(query)['status']
 		gcm = data['gcode_move']
 		z_offset = gcm['homing_origin'][2] #z offset
 		flow_rate = gcm['extrude_factor'] * 100 #flow rate percent
@@ -422,7 +421,7 @@ class PrinterData:
 				Update = True
 		except:
 			pass #missing key, shouldn't happen, fixes misses on conditionals ¯\_(ツ)_/¯
-		self.job_Info = self.getREST('/printer/objects/query?virtual_sdcard&print_stats')['result']['status']
+		self.job_Info = self.getREST('/printer/objects/query?virtual_sdcard&print_stats')['status']
 		if self.job_Info:
 			self.file_name = self.job_Info['print_stats']['filename']
 			self.status = self.job_Info['print_stats']['state']
